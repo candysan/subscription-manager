@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>サブスク管理表</title>
+  <!-- 外部スタイルシートを読み込む -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <h1>サブスク管理表</h1>
+
+  <!-- ========== サービス追加フォーム ========== -->
+  <section class="form-section">
+    <h2>サービスを追加</h2>
+    <form id="subscForm">
+
+      <!-- サービス名 -->
+      <div class="form-row">
+        <label for="serviceName">サービス名</label>
+        <input type="text" id="serviceName" placeholder="例: Netflix" />
+      </div>
+
+      <!-- カテゴリ (仕事 / プライベート) -->
+      <div class="form-row">
+        <label for="category">カテゴリ</label>
+        <select id="category">
+          <option value="private">プライベート</option>
+          <option value="work">仕事</option>
+        </select>
+      </div>
+
+      <!-- 通貨 (円 / ドル) -->
+      <div class="form-row">
+        <label for="currency">通貨</label>
+        <select id="currency">
+          <option value="JPY">円 (JPY)</option>
+          <option value="USD">ドル (USD)</option>
+        </select>
+      </div>
+
+      <!-- 月額 -->
+      <div class="form-row">
+        <label for="monthlyFee">月額</label>
+        <input type="number" id="monthlyFee" placeholder="例: 990" min="0" />
+      </div>
+
+      <!-- 年額 -->
+      <div class="form-row">
+        <label for="yearlyFee">年額</label>
+        <input type="number" id="yearlyFee" placeholder="例: 9900" min="0" />
+      </div>
+
+      <!-- 更新日 -->
+      <div class="form-row">
+        <label for="renewalDate">更新日</label>
+        <input type="date" id="renewalDate" />
+      </div>
+
+      <!-- ステータス -->
+      <div class="form-row">
+        <label for="status">ステータス</label>
+        <select id="status">
+          <option value="active">利用中</option>
+          <option value="considering">解約検討中</option>
+          <option value="cancelled">解約済み</option>
+        </select>
+      </div>
+
+      <button type="submit">追加する</button>
+    </form>
+  </section>
+
+  <!-- ========== 合計表示エリア ========== -->
+  <section class="summary-section">
+    <h2>合計</h2>
+    <div class="summary-grid">
+      <!-- 全体合計 -->
+      <div class="summary-card">
+        <h3>全体</h3>
+        <p>月額合計: <span id="totalMonthly">-</span></p>
+        <p>年額合計: <span id="totalYearly">-</span></p>
+      </div>
+      <!-- 仕事合計 -->
+      <div class="summary-card">
+        <h3>仕事</h3>
+        <p>月額合計: <span id="workMonthly">-</span></p>
+        <p>年額合計: <span id="workYearly">-</span></p>
+      </div>
+      <!-- プライベート合計 -->
+      <div class="summary-card">
+        <h3>プライベート</h3>
+        <p>月額合計: <span id="privateMonthly">-</span></p>
+        <p>年額合計: <span id="privateYearly">-</span></p>
+      </div>
+    </div>
+    <!-- 注意書き: 円とドルを別々に表示 -->
+    <p class="note">※ 円とドルは別々に集計しています</p>
+  </section>
+
+  <!-- ========== 一覧表示エリア ========== -->
+  <section class="list-section">
+    <h2>一覧</h2>
+
+    <!-- カテゴリ絞り込みボタン -->
+    <div class="filter-buttons">
+      <button class="filter-btn active" data-filter="all">すべて</button>
+      <button class="filter-btn" data-filter="work">仕事</button>
+      <button class="filter-btn" data-filter="private">プライベート</button>
+    </div>
+
+    <!-- サブスク一覧テーブル -->
+    <table id="subscTable">
+      <thead>
+        <tr>
+          <th>カテゴリ</th>
+          <th>サービス名</th>
+          <th>月額</th>
+          <th>年額</th>
+          <th>更新日</th>
+          <th>ステータス</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <!-- tbody の中身は JavaScript で動的に生成する -->
+      <tbody id="subscList"></tbody>
+    </table>
+
+    <!-- データが0件のときに表示するメッセージ -->
+    <p id="emptyMessage" class="empty-msg">まだサービスが登録されていません。</p>
+  </section>
+
+  <!-- 外部スクリプトを読み込む -->
+  <script src="script.js"></script>
+</body>
+</html>
