@@ -9,6 +9,107 @@
   box-sizing: border-box; /* paddingやborderを幅に含める */
 }
 
+/* ========================================
+   ヘッダー (ログイン後に表示)
+   ======================================== */
+
+.app-header {
+  display: flex;
+  justify-content: space-between; /* タイトルと右側を両端に配置 */
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.app-header h1 {
+  margin-bottom: 0; /* ヘッダー内では余白不要 */
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ログイン中のメールアドレス表示 */
+.user-email {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* ログアウトボタン */
+.logout-btn {
+  padding: 6px 16px;
+  background: #ffc6c7;
+  color: #33272a;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background-color 0.2s;
+}
+
+.logout-btn:hover {
+  background: #f0a0a2;
+}
+
+/* ========================================
+   ログイン / 新規登録セクション
+   ======================================== */
+
+/* ログイン画面全体: 中央寄せで縦に配置 */
+.login-section {
+  max-width: 420px;
+  margin: 80px auto;
+  background: #faeee7;
+  border-radius: 16px;
+  padding: 40px 36px;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 16px rgba(180, 120, 120, 0.1);
+  text-align: center;
+}
+
+.login-title {
+  font-size: 1.6rem;
+  color: #33272a;
+  margin-bottom: 8px;
+}
+
+.login-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 28px;
+}
+
+/* ログインフォーム内のラベルを左揃えにする */
+.login-form .form-row {
+  text-align: left;
+}
+
+/* エラー / 成功メッセージ */
+.auth-error {
+  font-size: 0.85rem;
+  min-height: 20px;
+  margin-bottom: 8px;
+  color: #c0392b;
+}
+
+/* ログイン ↔ 新規登録の切り替えテキスト */
+.auth-toggle-text {
+  margin-top: 20px;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.auth-toggle-text a {
+  color: var(--primary-dark);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.auth-toggle-text a:hover {
+  text-decoration: underline;
+}
+
 /* カラーパレット (落ち着いたローズ・モーブ系)
    --primary     : メインカラー (くすみローズ)
    --primary-dark: ホバー時の濃いめローズ
