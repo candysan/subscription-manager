@@ -267,7 +267,7 @@ button[type="submit"]:hover {
 }
 
 .annual-total span {
-  color: var(--primary-dark);
+  color: #33272a;
 }
 
 .note {
