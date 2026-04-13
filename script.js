@@ -147,6 +147,7 @@ const STATUS_LABEL = {
 const CATEGORY_LABEL = {
   work:    "仕事",
   private: "プライベート",
+  tax:     "税金",
 };
 
 // ----------------------------------------
@@ -182,6 +183,8 @@ function updateSummary() {
   document.getElementById("workYearly").textContent      = formatBoth(calcTotal(subscriptions, "work",    "JPY", "yearlyFee"),  calcTotal(subscriptions, "work",    "USD", "yearlyFee"));
   document.getElementById("privateMonthly").textContent  = formatBoth(calcTotal(subscriptions, "private", "JPY", "monthlyFee"), calcTotal(subscriptions, "private", "USD", "monthlyFee"));
   document.getElementById("privateYearly").textContent   = formatBoth(calcTotal(subscriptions, "private", "JPY", "yearlyFee"),  calcTotal(subscriptions, "private", "USD", "yearlyFee"));
+  document.getElementById("taxMonthly").textContent      = formatBoth(calcTotal(subscriptions, "tax",     "JPY", "monthlyFee"), calcTotal(subscriptions, "tax",     "USD", "monthlyFee"));
+  document.getElementById("taxYearly").textContent       = formatBoth(calcTotal(subscriptions, "tax",     "JPY", "yearlyFee"),  calcTotal(subscriptions, "tax",     "USD", "yearlyFee"));
 }
 
 // ----------------------------------------

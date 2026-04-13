@@ -60,6 +60,7 @@
           <select id="category">
             <option value="private">プライベート</option>
             <option value="work">仕事</option>
+            <option value="tax">税金</option>
           </select>
         </div>
 
@@ -118,6 +119,11 @@
           <p>月額合計: <span id="privateMonthly">-</span></p>
           <p>年額合計: <span id="privateYearly">-</span></p>
         </div>
+        <div class="summary-card">
+          <h3>税金</h3>
+          <p>月額合計: <span id="taxMonthly">-</span></p>
+          <p>年額合計: <span id="taxYearly">-</span></p>
+        </div>
       </div>
       <p class="note">※ 円とドルは別々に集計しています（解約済みは除く）</p>
     </section>
@@ -130,6 +136,7 @@
         <button class="filter-btn active" data-filter="all">すべて</button>
         <button class="filter-btn" data-filter="work">仕事</button>
         <button class="filter-btn" data-filter="private">プライベート</button>
+        <button class="filter-btn" data-filter="tax">税金</button>
       </div>
 
       <table id="subscTable">
