@@ -258,6 +258,18 @@ button[type="submit"]:hover {
   color: #33272a;
 }
 
+/* 年間換算合計の行を強調表示 */
+.annual-total {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #f0a0a2;
+  font-size: 0.9rem;
+}
+
+.annual-total span {
+  color: var(--primary-dark);
+}
+
 .note {
   margin-top: 12px;
   font-size: 0.8rem;

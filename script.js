@@ -179,12 +179,16 @@ function updateSummary() {
 
   document.getElementById("totalMonthly").textContent    = formatBoth(calcTotal(subscriptions, null,      "JPY", "monthlyFee"), calcTotal(subscriptions, null,      "USD", "monthlyFee"));
   document.getElementById("totalYearly").textContent     = formatBoth(calcTotal(subscriptions, null,      "JPY", "yearlyFee"),  calcTotal(subscriptions, null,      "USD", "yearlyFee"));
+  document.getElementById("totalAnnual").textContent     = formatBoth(calcTotal(subscriptions, null,      "JPY", "monthlyFee") * 12 + calcTotal(subscriptions, null,      "JPY", "yearlyFee"), calcTotal(subscriptions, null,      "USD", "monthlyFee") * 12 + calcTotal(subscriptions, null,      "USD", "yearlyFee"));
   document.getElementById("workMonthly").textContent     = formatBoth(calcTotal(subscriptions, "work",    "JPY", "monthlyFee"), calcTotal(subscriptions, "work",    "USD", "monthlyFee"));
   document.getElementById("workYearly").textContent      = formatBoth(calcTotal(subscriptions, "work",    "JPY", "yearlyFee"),  calcTotal(subscriptions, "work",    "USD", "yearlyFee"));
+  document.getElementById("workAnnual").textContent      = formatBoth(calcTotal(subscriptions, "work",    "JPY", "monthlyFee") * 12 + calcTotal(subscriptions, "work",    "JPY", "yearlyFee"), calcTotal(subscriptions, "work",    "USD", "monthlyFee") * 12 + calcTotal(subscriptions, "work",    "USD", "yearlyFee"));
   document.getElementById("privateMonthly").textContent  = formatBoth(calcTotal(subscriptions, "private", "JPY", "monthlyFee"), calcTotal(subscriptions, "private", "USD", "monthlyFee"));
   document.getElementById("privateYearly").textContent   = formatBoth(calcTotal(subscriptions, "private", "JPY", "yearlyFee"),  calcTotal(subscriptions, "private", "USD", "yearlyFee"));
+  document.getElementById("privateAnnual").textContent   = formatBoth(calcTotal(subscriptions, "private", "JPY", "monthlyFee") * 12 + calcTotal(subscriptions, "private", "JPY", "yearlyFee"), calcTotal(subscriptions, "private", "USD", "monthlyFee") * 12 + calcTotal(subscriptions, "private", "USD", "yearlyFee"));
   document.getElementById("taxMonthly").textContent      = formatBoth(calcTotal(subscriptions, "tax",     "JPY", "monthlyFee"), calcTotal(subscriptions, "tax",     "USD", "monthlyFee"));
   document.getElementById("taxYearly").textContent       = formatBoth(calcTotal(subscriptions, "tax",     "JPY", "yearlyFee"),  calcTotal(subscriptions, "tax",     "USD", "yearlyFee"));
+  document.getElementById("taxAnnual").textContent       = formatBoth(calcTotal(subscriptions, "tax",     "JPY", "monthlyFee") * 12 + calcTotal(subscriptions, "tax",     "JPY", "yearlyFee"), calcTotal(subscriptions, "tax",     "USD", "monthlyFee") * 12 + calcTotal(subscriptions, "tax",     "USD", "yearlyFee"));
 }
 
 // ----------------------------------------
