@@ -192,7 +192,51 @@ function updateSummary() {
 }
 
 // ----------------------------------------
-// 7. 一覧テーブルの描画
+// 7. 次の更新日を計算する
+// ----------------------------------------
+
+/**
+ * 更新日が過去の場合、次の更新日を自動計算して返す
+ * @param {string} renewalDate - 更新日 (YYYY-MM-DD)
+ * @param {number} monthlyFee  - 月額 (設定されていれば月次サイクル)
+ * @param {number} yearlyFee   - 年額 (月額なしなら年次サイクル)
+ * @returns {{ date: string, isAuto: boolean }}
+ *   date   : 表示する更新日 (YYYY-MM-DD)
+ *   isAuto : 自動計算された日付なら true
+ */
+function calcNextRenewalDate(renewalDate, monthlyFee, yearlyFee) {
+  if (!renewalDate) return { date: null, isAuto: false };
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // 時刻をリセットして日付だけで比較
+
+  const original = new Date(renewalDate);
+
+  // 更新日がまだ未来なら、そのまま表示
+  if (original >= today) return { date: renewalDate, isAuto: false };
+
+  // 月額が設定されていれば月次、それ以外は年次
+  const isMonthly = monthlyFee && Number(monthlyFee) > 0;
+
+  // 過去の更新日から、今日以降になるまでサイクルを加算する
+  let date = new Date(original);
+  while (date < today) {
+    if (isMonthly) {
+      date.setMonth(date.getMonth() + 1); // 1ヶ月ずつ加算
+    } else {
+      date.setFullYear(date.getFullYear() + 1); // 1年ずつ加算
+    }
+  }
+
+  // YYYY-MM-DD 形式の文字列に変換して返す
+  const yyyy = date.getFullYear();
+  const mm   = String(date.getMonth() + 1).padStart(2, "0");
+  const dd   = String(date.getDate()).padStart(2, "0");
+  return { date: `${yyyy}-${mm}-${dd}`, isAuto: true };
+}
+
+// ----------------------------------------
+// 8. 一覧テーブルの描画
 // ----------------------------------------
 
 function renderList() {
@@ -229,13 +273,26 @@ function renderList() {
     const deleteBtn =
       `<button class="delete-btn" onclick="deleteItem('${s.id}')">削除</button>`;
 
+    // 次の更新日を計算する
+    const renewal = calcNextRenewalDate(s.renewalDate, s.monthlyFee, s.yearlyFee);
+
+    // 自動計算された日付はオレンジ色で「(自動)」ラベルを付ける
+    let renewalDisplay = "-";
+    if (renewal.date) {
+      if (renewal.isAuto) {
+        renewalDisplay = `<span class="renewal-auto">${renewal.date}<br><small>自動更新</small></span>`;
+      } else {
+        renewalDisplay = renewal.date;
+      }
+    }
+
     return (
       `<tr>` +
       `<td>${categoryBadge}</td>` +
       `<td>${s.serviceName}</td>` +
       `<td>${formatAmount(s.monthlyFee, s.currency)}</td>` +
       `<td>${formatAmount(s.yearlyFee,  s.currency)}</td>` +
-      `<td>${s.renewalDate || "-"}</td>` +
+      `<td>${renewalDisplay}</td>` +
       `<td>${statusBadge}</td>` +
       `<td>${statusSelect}${deleteBtn}</td>` +
       `</tr>`
