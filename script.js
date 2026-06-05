@@ -80,12 +80,23 @@ function showLogin() {
 }
 
 // ページ読み込み時: getSession() で既存のセッションを明示的に確認する
-// onAuthStateChange だけだと復元タイミングがずれることがあるため、これを先に実行する
 (async function () {
-  const { data: { session } } = await db.auth.getSession();
-  if (session) {
-    await showApp(session);
-  } else {
+  console.log("🔵 1. アプリ初期化開始");
+  try {
+    console.log("🔵 2. getSession() 呼び出し中...");
+    const { data, error } = await db.auth.getSession();
+    console.log("🔵 3. getSession() 完了 session:", !!data?.session, "error:", error);
+
+    if (data?.session) {
+      console.log("🔵 4. セッションあり → データ読み込み開始");
+      await showApp(data.session);
+      console.log("🔵 5. 初期化完了");
+    } else {
+      console.log("🔵 4. セッションなし → ログイン画面表示");
+      showLogin();
+    }
+  } catch (e) {
+    console.error("🔴 初期化エラー:", e.message);
     showLogin();
   }
 })();
@@ -122,13 +133,16 @@ function dbToJs(row) {
 
 // Supabase からサブスクリプション一覧を読み込む
 async function loadSubscriptions() {
+  console.log("🔵 loadSubscriptions() 開始");
   const { data, error } = await db
     .from("subscriptions")   // テーブル名
     .select("*")             // すべてのカラムを取得
     .order("created_at", { ascending: false }); // 新しい順に並べる
 
+  console.log("🔵 loadSubscriptions() 完了 件数:", data?.length, "error:", error);
+
   if (error) {
-    console.error("データ読み込みエラー:", error.message);
+    console.error("🔴 データ読み込みエラー:", error.message);
     return;
   }
 
