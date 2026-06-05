@@ -424,6 +424,66 @@ tbody tr:hover {
   background-color: #b8707a;
 }
 
+/* 編集ボタン */
+.edit-btn {
+  padding: 4px 10px;
+  background-color: #ffc6c7;
+  color: #33272a;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  margin-right: 6px;
+  transition: background-color 0.2s;
+}
+
+.edit-btn:hover {
+  background-color: #f0a0a2;
+}
+
+/* インライン編集の入力欄 */
+.edit-input {
+  padding: 4px 8px;
+  border: 1px solid var(--primary);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  width: 140px;
+  box-shadow: 0 0 0 3px rgba(194, 130, 138, 0.15);
+}
+
+/* 保存・キャンセルボタンの並び */
+.edit-actions {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+/* 保存ボタン */
+.save-btn {
+  padding: 3px 10px;
+  background-color: #c3f0ca;
+  color: #33272a;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.save-btn:hover {
+  background-color: #a8ddb0;
+}
+
+/* キャンセルボタン */
+.cancel-btn {
+  padding: 3px 10px;
+  background-color: #f0e8e8;
+  color: #33272a;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
 /* ========================================
    自動更新日
    ======================================== */

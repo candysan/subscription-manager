@@ -273,10 +273,14 @@ function renderList() {
     const deleteBtn =
       `<button class="delete-btn" onclick="deleteItem('${s.id}')">削除</button>`;
 
+    // 編集ボタン: クリックするとサービス名をテキスト入力欄に切り替える
+    const editBtn =
+      `<button class="edit-btn" onclick="startEdit('${s.id}', '${s.serviceName.replace(/'/g, "\\'")}')">編集</button>`;
+
     // 次の更新日を計算する
     const renewal = calcNextRenewalDate(s.renewalDate, s.monthlyFee, s.yearlyFee);
 
-    // 自動計算された日付はオレンジ色で「(自動)」ラベルを付ける
+    // 自動計算された日付はオレンジ色で「自動更新」ラベルを付ける
     let renewalDisplay = "-";
     if (renewal.date) {
       if (renewal.isAuto) {
@@ -287,21 +291,87 @@ function renderList() {
     }
 
     return (
-      `<tr>` +
+      `<tr id="row-${s.id}">` +
       `<td>${categoryBadge}</td>` +
-      `<td>${s.serviceName}</td>` +
+      `<td id="name-cell-${s.id}">${s.serviceName}</td>` +
       `<td>${formatAmount(s.monthlyFee, s.currency)}</td>` +
       `<td>${formatAmount(s.yearlyFee,  s.currency)}</td>` +
       `<td>${renewalDisplay}</td>` +
       `<td>${statusBadge}</td>` +
-      `<td>${statusSelect}${deleteBtn}</td>` +
+      `<td>${statusSelect}${editBtn}${deleteBtn}</td>` +
       `</tr>`
     );
   }).join("");
 }
 
 // ----------------------------------------
-// 8. データの追加・変更・削除
+// 9. サービス名のインライン編集
+// ----------------------------------------
+
+// 「編集」ボタンを押したとき: サービス名セルを入力欄に切り替える
+function startEdit(id, currentName) {
+  const cell = document.getElementById("name-cell-" + id);
+  if (!cell) return;
+
+  // テキストを入力欄 + 保存・キャンセルボタンに置き換える
+  cell.innerHTML =
+    `<input type="text" id="edit-input-${id}" class="edit-input" value="${currentName}" />` +
+    `<div class="edit-actions">` +
+    `<button class="save-btn" onclick="saveEdit('${id}')">保存</button>` +
+    `<button class="cancel-btn" onclick="cancelEdit('${id}', '${currentName.replace(/'/g, "\\'")}')">キャンセル</button>` +
+    `</div>`;
+
+  // 入力欄にフォーカスして全選択
+  const input = document.getElementById("edit-input-" + id);
+  input.focus();
+  input.select();
+
+  // Enter キーで保存、Escape キーでキャンセル
+  input.addEventListener("keydown", function (e) {
+    if (e.key === "Enter")  saveEdit(id);
+    if (e.key === "Escape") cancelEdit(id, currentName);
+  });
+}
+
+// 「保存」ボタンを押したとき: Supabase を更新する
+async function saveEdit(id) {
+  const input = document.getElementById("edit-input-" + id);
+  if (!input) return;
+
+  const newName = input.value.trim();
+  if (!newName) {
+    alert("サービス名を入力してください。");
+    return;
+  }
+
+  const { error } = await db
+    .from("subscriptions")
+    .update({ service_name: newName })
+    .eq("id", id);
+
+  if (error) {
+    console.error("編集エラー:", error.message);
+    alert("保存に失敗しました。再度お試しください。");
+    return;
+  }
+
+  // ローカルのデータも更新
+  subscriptions = subscriptions.map(function (s) {
+    if (s.id === id) return Object.assign({}, s, { serviceName: newName });
+    return s;
+  });
+
+  renderList();
+}
+
+// 「キャンセル」ボタンを押したとき: 元のテキストに戻す
+function cancelEdit(id, originalName) {
+  const cell = document.getElementById("name-cell-" + id);
+  if (cell) cell.innerHTML = originalName;
+}
+
+// ----------------------------------------
+// 10. データの追加・変更・削除
 // ----------------------------------------
 
 // フォームの送信: 新しいサービスを Supabase に追加する
