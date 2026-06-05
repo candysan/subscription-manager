@@ -13,8 +13,14 @@ const SUPABASE_URL = "https://kmoezssvgmzjsfprvmwd.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imttb2V6c3N2Z216anNmcHJ2bXdkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3MjM5NjEsImV4cCI6MjA5MTI5OTk2MX0.BQ8wJRLmhARsVz5_g1Cl3GBy4pOvwGDF7bLoviaYy3M";
 
 // Supabase クライアントを初期化する
-// window.supabase は CDN で読み込んだライブラリ
-const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// autoRefreshToken: false にすることでトークン更新処理のフリーズを防ぐ
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: {
+    autoRefreshToken: false,   // 自動トークン更新を無効化
+    persistSession: true,      // セッションはlocalStorageに保持する
+    detectSessionInUrl: false, // URLからセッションを検出しない
+  }
+});
 
 // ----------------------------------------
 // 2. アプリの状態
@@ -79,26 +85,28 @@ function showLogin() {
   subscriptions = [];
 }
 
-// ページ読み込み時: getSession() で既存のセッションを明示的に確認する
+// ページ読み込み時: セッションを確認してアプリを初期化する
 (async function () {
-  console.log("🔵 1. アプリ初期化開始");
-  try {
-    console.log("🔵 2. getSession() 呼び出し中...");
-    const { data, error } = await db.auth.getSession();
-    console.log("🔵 3. getSession() 完了 session:", !!data?.session, "error:", error);
+  const { data } = await db.auth.getSession();
+  const session = data?.session;
 
-    if (data?.session) {
-      console.log("🔵 4. セッションあり → データ読み込み開始");
-      await showApp(data.session);
-      console.log("🔵 5. 初期化完了");
-    } else {
-      console.log("🔵 4. セッションなし → ログイン画面表示");
-      showLogin();
-    }
-  } catch (e) {
-    console.error("🔴 初期化エラー:", e.message);
+  if (!session) {
+    // セッションなし → ログイン画面
     showLogin();
+    return;
   }
+
+  // トークンの有効期限を確認する（expires_at は Unix タイムスタンプ）
+  const now = Math.floor(Date.now() / 1000);
+  if (session.expires_at && now >= session.expires_at) {
+    // トークンが切れている → サインアウトしてログイン画面へ
+    await db.auth.signOut();
+    showLogin();
+    return;
+  }
+
+  // セッション有効 → アプリを表示
+  await showApp(session);
 })();
 
 // 認証状態の変化を監視する (ログイン・ログアウト時のみ対応)
@@ -133,16 +141,13 @@ function dbToJs(row) {
 
 // Supabase からサブスクリプション一覧を読み込む
 async function loadSubscriptions() {
-  console.log("🔵 loadSubscriptions() 開始");
   const { data, error } = await db
     .from("subscriptions")   // テーブル名
     .select("*")             // すべてのカラムを取得
     .order("created_at", { ascending: false }); // 新しい順に並べる
 
-  console.log("🔵 loadSubscriptions() 完了 件数:", data?.length, "error:", error);
-
   if (error) {
-    console.error("🔴 データ読み込みエラー:", error.message);
+    console.error("データ読み込みエラー:", error.message);
     return;
   }
 
