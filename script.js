@@ -60,33 +60,44 @@ document.getElementById("logoutBtn").addEventListener("click", async function ()
   // signOut 後は onAuthStateChange が発火してログイン画面に戻る
 });
 
-// 認証状態の変化を監視する
-// ページ読み込み時・ログイン時・ログアウト時に自動的に呼ばれる
-db.auth.onAuthStateChange(async function (event, session) {
+// ログイン済みのときにメインコンテンツを表示する共通関数
+async function showApp(session) {
+  document.getElementById("loginSection").style.display = "none";
+  document.getElementById("appHeader").style.display    = "flex";
+  document.getElementById("mainContent").style.display  = "block";
+  document.getElementById("userEmail").textContent      = session.user.email;
+  await loadSubscriptions();
+  renderList();
+  updateSummary();
+}
+
+// ログアウト時にログイン画面に戻す共通関数
+function showLogin() {
+  document.getElementById("loginSection").style.display = "block";
+  document.getElementById("appHeader").style.display    = "none";
+  document.getElementById("mainContent").style.display  = "none";
+  subscriptions = [];
+}
+
+// ページ読み込み時: getSession() で既存のセッションを明示的に確認する
+// onAuthStateChange だけだと復元タイミングがずれることがあるため、これを先に実行する
+(async function () {
+  const { data: { session } } = await db.auth.getSession();
   if (session) {
-    // ===== ログイン済み =====
-    // ログイン画面を隠してメインコンテンツを表示する
-    document.getElementById("loginSection").style.display = "none";
-    document.getElementById("appHeader").style.display    = "flex";
-    document.getElementById("mainContent").style.display  = "block";
-
-    // ヘッダーにメールアドレスを表示
-    document.getElementById("userEmail").textContent = session.user.email;
-
-    // Supabase からデータを読み込んで一覧を表示する
-    await loadSubscriptions();
-    renderList();
-    updateSummary();
-
+    await showApp(session);
   } else {
-    // ===== 未ログイン =====
-    // メインコンテンツを隠してログイン画面を表示する
-    document.getElementById("loginSection").style.display = "block";
-    document.getElementById("appHeader").style.display    = "none";
-    document.getElementById("mainContent").style.display  = "none";
+    showLogin();
+  }
+})();
 
-    // データをクリア
-    subscriptions = [];
+// 認証状態の変化を監視する (ログイン・ログアウト時のみ対応)
+db.auth.onAuthStateChange(async function (event, session) {
+  if (event === "SIGNED_IN") {
+    // ログインしたとき
+    await showApp(session);
+  } else if (event === "SIGNED_OUT") {
+    // ログアウトしたとき
+    showLogin();
   }
 });
 
